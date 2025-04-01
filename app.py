@@ -5,15 +5,25 @@ import cv2
 import tempfile
 from PIL import Image
 import base64
+import gdown
+import os
 
 # === Set Streamlit Page Config ===
 st.set_page_config(page_title="TB Detection from Chest X-rays", layout="wide")
 st.title("🩺 TB Detection from Chest X-rays using Deep Learning")
 
+# === Download and load the model from Google Drive ===
+MODEL_FILE = "tb_model.keras"
+DRIVE_URL = "https://drive.google.com/uc?id=1rgdhAQ92wjcjwMGAQXbCGgEKvTFg_aFd"
+
 # === Load the trained model ===
 @st.cache_resource
 def load_model():
-    return tf.keras.models.load_model("tb_model.keras")
+    #return tf.keras.models.load_model("tb_model.keras")
+    if not os.path.exists(MODEL_FILE):
+        with st.spinner("Downloading model..."):
+            gdown.download(DRIVE_URL, MODEL_FILE, quiet=False)
+    return tf.keras.models.load_model(MODEL_FILE)
 
 model = load_model()
 last_conv_layer_name = "conv5_block16_2_conv"
