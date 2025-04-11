@@ -6,4 +6,5 @@ Pillow
 gdown
 lime
 scikit-image
-
+torch
+torchvision
