@@ -23,7 +23,7 @@ st.markdown("""
 <style>
 /* Entire background + font */
 .stApp {
-        background-image:url("https://raw.githubusercontent.com/chiru2122mca/tb-xray-app/main/BG_Image.png");;
+        background-image:;
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
