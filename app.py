@@ -23,7 +23,7 @@ st.markdown("""
 <style>
 /* Entire background + font */
 .stApp {
-        background-image:;
+        background-image: ;
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
