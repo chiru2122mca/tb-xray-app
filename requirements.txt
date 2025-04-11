@@ -4,3 +4,6 @@ opencv-python-headless
 numpy
 Pillow
 gdown
+lime
+scikit-image
+
