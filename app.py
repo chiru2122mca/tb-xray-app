@@ -2,6 +2,7 @@ import streamlit as st
 import torch
 import torchvision.models as models
 #from efficientnet_pytorch import EfficientNet
+from tensorflow.keras.applications.efficientnet import preprocess_input
 import torch.nn as nn
 from PIL import Image
 import numpy as np
@@ -144,6 +145,8 @@ def load_resnet50_model(model_path):
 import json
 import os
 import zipfile
+import sys
+from io import StringIO
 def load_efficientnet_b1_model(model_path):
     
     # Check if the path is a zip file
@@ -169,9 +172,19 @@ def load_efficientnet_b1_model(model_path):
         raise FileNotFoundError(f"Weights file not found at: {weights_path}")
     
     model.load_weights(weights_path)
+    #st.write(model.summary())
+    #summary_str = str(model.summary())
+    #st.write("Model Summary:")
+    #old_stdout = sys.stdout
+    #sys.stdout = mystdout = StringIO()
+    #model.summary()
+    #sys.stdout = old_stdout
+    #summary_str = mystdout.getvalue()
+    #st.write("Model Summary:")
+    #st.text(summary_str)
     return model
-    model = tf.keras.models.load_model(model_path)
-    return model
+    #model = tf.keras.models.load_model(model_path)
+    
 
 def load_densenet121_model(model_path):
     model = tf.keras.models.load_model(model_path)
@@ -197,8 +210,11 @@ def predict_image(model, image,model_name):
         img_array = tf.image.resize(img_array, [IMG_SIZE, IMG_SIZE])
         img_array = np.expand_dims(img_array / 255.0, axis=0)
         predictions = model.predict(img_array)
+        #st.write(f"Predictions shape: {predictions.shape}, Values: {predictions}")
         tb_prob = float(predictions[0][0])
+        #st.write(f"TB prob: {tb_prob}")
         normal_prob = 1 - tb_prob 
+        #st.write(f"Non-TB prob: {normal_prob}")
         probs = [normal_prob, tb_prob]
 
         # Decide predicted class
@@ -281,14 +297,40 @@ def predict_image(model, image,model_name):
             # Resize image to 240x240 to match EfficientNet-B1 expected input
             img_array = tf.keras.preprocessing.image.img_to_array(image)
             img_array = tf.image.resize(img_array, [240, 240])  # Change to 240x240
-            img_array = np.expand_dims(img_array / 255.0, axis=0)  # Normalize and add batch dimension
+            img_array = preprocess_input(img_array)
+            img_array = np.expand_dims(img_array, axis=0)  # Normalize and add batch dimension
             predictions = model.predict(img_array)
-            tb_prob = float(predictions[0][1])  # Assuming index 1 is TB
-            normal_prob = 1 - tb_prob
-            probs = [normal_prob, tb_prob]
-            pred_index = 1 if tb_prob > 0.5 else 0
-            pred_class = CLASS_NAMES[pred_index]
-
+            #st.write(f"Predictions shape: {predictions.shape}, Values: {predictions}")
+            pred_index = int(np.argmax(predictions[0]))
+            pred_class = "TB Chest X-rays" if pred_index == 1 else "Normal Chest X-rays"
+            probs = predictions[0].tolist()
+            #tb_prob = predictions[0][1]  # Assuming index 1 is TB
+            #st.write(f"TB prob: {probs}")
+            #normal_prob = predictions[0][0]
+            #st.write(f"Non-TB prob: {normal_prob}")
+            #probs = [normal_prob, tb_prob]
+           # pred_index = 1 if tb_prob > 0.5 else 0
+            #pred_class = "TB Chest X-rays" if pred_index == 1 else "Normal Chest X-rays"
+            #pred_class = CLASS_NAMES[pred_index]
+            
+            #if predictions.shape[1] == 1:  # Sigmoid output
+             #   tb_prob = float(predictions[0][0])
+                #normal_prob = 1 - tb_prob
+            #elif predictions.shape[1] == 2:  # Softmax output
+            #    normal_prob = float(predictions[0][0])
+            #tb_prob = float(predictions[0][1])
+            #non_tb_prob = float(predictions[0][0])
+            #probs=[non_tb_prob,tb_prob]
+            #pred_index = 1 if tb_prob > 0.5 else 0
+            #pred_class = "Normal Chest X-rays" if pred_index == 0 else "TB Chest X-rays" 
+            #print(f"Predicted Class: {predicted_class} (TB: {tb_prob:.4f}, Non-TB: {non_tb_prob:.4f})")
+            #else:
+            #raise ValueError(f"Unexpected predictions shape: {predictions.shape}")
+            #probs = [normal_prob, tb_prob]
+            #st.write(f"Normal prob: {normal_prob}, TB prob: {tb_prob}")
+            #pred_index = 1 if tb_prob > 0.5 else 0
+           # pred_class = CLASS_NAMES[pred_index]
+            
         # Grad-CAM for EfficientNet
             layer_name = 'top_conv'  # Replace with the actual last Conv2D layer name from model.summary()
             heatmap = make_gradcam_keras(img_array, model, layer_name)
