@@ -300,12 +300,12 @@ def predict_image(model, image,model_name):
             img_array = preprocess_input(img_array)
             img_array = np.expand_dims(img_array, axis=0)  # Normalize and add batch dimension
             predictions = model.predict(img_array)
-            st.write(f"Predictions shape: {predictions.shape}, Values: {predictions}")
+            #st.write(f"Predictions shape: {predictions.shape}, Values: {predictions}")
             pred_index = int(np.argmax(predictions[0]))
             pred_class = "TB Chest X-rays" if pred_index == 1 else "Normal Chest X-rays"
             probs = predictions[0].tolist()
             #tb_prob = predictions[0][1]  # Assuming index 1 is TB
-            st.write(f"TB prob: {probs}")
+            #st.write(f"TB prob: {probs}")
             #normal_prob = predictions[0][0]
             #st.write(f"Non-TB prob: {normal_prob}")
             #probs = [normal_prob, tb_prob]
