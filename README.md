@@ -46,7 +46,7 @@ This project aims to **detect Tuberculosis (TB)** using chest X-ray images throu
 
 ## 📷 Sample UI
 
-<img src="ui-example.png" width="700"/>
+<img src="tb-xray-app/ui-example.jpg" width="700"/>
 
 ---
 
