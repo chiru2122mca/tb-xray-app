@@ -667,6 +667,6 @@ if __name__ == "__main__":
  # Footer
 st.markdown("""
 <div class="footer">
-    🚀 Capstone Project | <b>BITS Pilani WILP</b> Group 17 | <span style="color:#ffd700;">2025</span> © <b>TB Detection Project</b>
+    🚀 Capstone Project | Chiranjeevi Atchukolu | <span style="color:#ffd700;">2025</span> © <b>TB Detection Project</b>
 </div>
 """, unsafe_allow_html=True)
